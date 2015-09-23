@@ -5,4 +5,5 @@ jdk:
     - oraclejdk7
     - openjdk7
 
+install: ./gradlew assemble -x signArchives
 script: ./gradlew check
