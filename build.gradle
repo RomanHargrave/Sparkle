@@ -1,5 +1,20 @@
 apply plugin: 'java'
 apply plugin: 'scala'
+apply plugin: 'signing'
+apply plugin: 'maven'
+
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "com.github.maiflai:gradle-scalatest:0.9"
+    }
+}
+
+apply plugin: "com.github.maiflai.scalatest"
 
 /**
  * Prevent IDEA from passing -target:jdk-1.8 to scalac (wtf)
@@ -13,5 +28,79 @@ repositories {
 
 dependencies {
     compile     group: 'org.scala-lang',    name: 'scala-library-all',  version: '2.11.0'
+
     testCompile group: 'org.scalatest',     name: 'scalatest_2.11',     version: '2.2.5'
+    testRuntime group: 'org.pegdown',       name: 'pegdown',            version: '1.1.0'
+}
+
+task scaladocJar(type: Jar) {
+    classifier = 'scaladoc'
+    from scaladoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+/*
+ * Publishing
+ */
+
+group               = 'info.hargrave'
+archivesBaseName    = 'sparkle_2.11'
+version             = '1'
+
+
+artifacts {
+    archives jar, scaladocJar, sourcesJar
+}
+
+signing {
+    sign configurations.archives
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment ->
+                signing.signPom(deployment)
+            }
+
+            repository (url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: sonatype_username, password: sonatype_password)
+            }
+
+            snapshotRepository (url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: sonatype_username, password: sonatype_password)
+            }
+
+            pom.project {
+                name        'Sparkle'
+                packaging   'jar'
+                description 'A concise DSL for XML built with scala.xml'
+                url         'https://github.com/romanhargrave/sparkle'
+
+                scm {
+                    connection          'scm:git:git://github.com/romanhargrave/sparkle.git'
+                    developerConnection 'scm:git:ssh://git@github.com/romanhargrave/sparkle.git'
+                    url                 'https://github.com/romanhargrave/sparkle'
+                }
+
+                licenses {
+                    license {
+                        name    'The Apache Software License, Version 2.0'
+                        url     'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id      'rhargrave'
+                        name    'Roman Hargrave'
+                        email   'roman@hargrave.info'
+                    }
+                }
+            }
+        }
+    }
 }
