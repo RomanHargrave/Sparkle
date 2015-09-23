@@ -50,6 +50,8 @@ group               = 'info.hargrave'
 archivesBaseName    = 'sparkle_2.11'
 version             = '1'
 
+publish_username    = hasProperty('sonatype_username') ? sonatype_username : System.getenv('GRADLE_PUBLISH_USERNAME')
+publish_password    = hasProperty('sonatype_password') ? sonatype_password : System.getenv('GRADLE_PUBLISH_PASSWORD')
 
 artifacts {
     archives jar, scaladocJar, sourcesJar
@@ -67,11 +69,11 @@ uploadArchives {
             }
 
             repository (url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                authentication(userName: sonatype_username, password: sonatype_password)
+                authentication(userName: publish_username, password: publish_password)
             }
 
             snapshotRepository (url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-                authentication(userName: sonatype_username, password: sonatype_password)
+                authentication(userName: publish_username, password: publish_password)
             }
 
             pom.project {
