@@ -3,33 +3,13 @@ apply plugin: 'scala'
 apply plugin: 'signing'
 apply plugin: 'maven'
 
-buildscript {
-    repositories {
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
-    }
-    dependencies {
-        classpath "com.github.maiflai:gradle-scalatest:0.9"
-    }
-}
-
-apply plugin: "com.github.maiflai.scalatest"
-
-/**
- * Prevent IDEA from passing -target:jdk-1.8 to scalac (wtf)
- * No java here anyways, so no worries
- */
-sourceCompatibility = '1.7'
-
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    compile     group: 'org.scala-lang',    name: 'scala-library-all',  version: '2.11.0'
-
-    testCompile group: 'org.scalatest',     name: 'scalatest_2.11',     version: '2.2.5'
+    compile     group: 'org.scala-lang',    name: 'scala-library-all',      version: '2.12.+'
+    testCompile group: 'org.scalatest',     name: 'scalatest_2.12',     version: '2.2.5'
     testRuntime group: 'org.pegdown',       name: 'pegdown',            version: '1.1.0'
 }
 
@@ -47,7 +27,7 @@ task sourcesJar(type: Jar) {
  */
 
 group               = 'info.hargrave'
-archivesBaseName    = 'sparkle_2.11'
+archivesBaseName    = 'sparkle_2.12'
 version             = '1'
 
 ext {
